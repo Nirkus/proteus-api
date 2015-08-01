@@ -189,6 +189,36 @@ class ProteusClientApi(object):
             return True
         return False
 
+    def _search_by_object_types(self, keyword, types, start=0, count=1):
+        """
+        Wrapper for Proteus SOAP API Method searchByObjectTypes
+
+        :Parameters:
+            - `keyword` : string
+            - `types` : string [ array of values from TYPE_* constants from :py:mod:`proteus.api.constants` ]
+            - `start` : int [ start results at this index (>= 1) ]
+            - `count` : int [ count of max. results to return ]
+
+        :return:
+            APIEntityArray
+
+        """
+        for entity_type in types:
+            if entity_type not in ALL_TYPES:
+                raise Exception("Unknown Entity Type: '%s'" % entity_type)
+        if self._is_connected:
+            try:
+                entities = self._client.service.searchByObjectTypes(
+                    keyword,
+                    ','.join(types),
+                    start,
+                    count,
+                )
+                return entities
+            except Exception, e:
+                print e
+                return False
+        return None
 
 class ProteusClient(ProteusClientApi):
     """
@@ -248,4 +278,7 @@ class ProteusClient(ProteusClientApi):
             self._get_configuration()
         return self._configuration
     Configuration = property(get_configuration, doc='Configuration Property')
+
+#    def search_by_types(self, keyword, types, start=0, count=1):
+        
 

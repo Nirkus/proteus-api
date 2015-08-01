@@ -384,6 +384,24 @@ class DNS(object):
         return None
 
 
+    def add_host_record(self, fqdn, addresses, ttl=-1, view=None, view_name=None):
+        """Add Host Record to Proteus, wrapper for API addHostRecord()
+        
+        :param fqdn: the Fully Qualified Domain Name
+        :param adresses: List of IPv4/IPv6 addresses
+        :param ttl: DNS TTL of host record
+        :param view: View name (can be None when view_name is not None)
+        :type view: :py:class:`proteus.objects.apientity.View`
+        :param view_name: View Name (can be None when view is not None)
+        :type view_name: str
+        
+        :returns: boolean
+        """
+        if not self._client.is_valid_connection():
+            return None
 
+        if not view:
+            view = self.get_view(view_name)
 
+        return self._client._client.service.addHostRecord( view.id, absoluteName=fqdn, addresses=addresses, ttl=ttl, properties="")
 

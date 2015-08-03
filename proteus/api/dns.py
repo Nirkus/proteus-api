@@ -395,7 +395,7 @@ class DNS(object):
         :param view_name: View Name (can be None when view is not None)
         :type view_name: str
         
-        :returns: boolean
+        :returns: recordId
         """
         if not self._client.is_valid_connection():
             return None
@@ -404,4 +404,45 @@ class DNS(object):
             view = self.get_view(view_name)
 
         return self._client._client.service.addHostRecord( view.id, absoluteName=fqdn, addresses=addresses, ttl=ttl, properties="")
+
+
+    def add_external_host(self, fqdn, view=None, view_name=None):
+        """Add External Host Reference to Proteus, wrapper for API addExternalHostRecord()
+        
+        :param fqdn: the Fully Qualified Domain Name of the external host
+        :param view: View name (can be None when view_name is not None)
+        :type view: :py:class:`proteus.objects.apientity.View`
+        :param view_name: View Name (can be None when view is not None)
+        :type view_name: str
+        
+        :returns: recordId
+        """
+        if not self._client.is_valid_connection():
+            return None
+
+        if not view:
+            view = self.get_view(view_name)
+
+        return self._client._client.service.addExternalHostRecord( view.id, name=fqdn, properties="")
+
+
+    def add_alias_record(self, fqdn, target_fqdn, ttl=-1, view=None, view_name=None):
+        """Add alias record (CNAME), wrapper for API addExternalHostRecord()
+        
+        :param fqdn: the Fully Qualified Domain Name of the CNAME record
+        :param target_fqdn: the Fully Qualified Domain Name this CNAME points to
+        :param view: View name (can be None when view_name is not None)
+        :type view: :py:class:`proteus.objects.apientity.View`
+        :param view_name: View Name (can be None when view is not None)
+        :type view_name: str
+        
+        :returns: recordId
+        """
+        if not self._client.is_valid_connection():
+            return None
+
+        if not view:
+            view = self.get_view(view_name)
+
+        return self._client._client.service.addAliasRecord( view.id, absoluteName=fqdn, linkedRecordName=target_fqdn, ttl=ttl, properties="")
 
